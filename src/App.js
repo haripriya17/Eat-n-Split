@@ -28,16 +28,23 @@ function Button({ children, onClick }) {
   );
 }
 export default function App() {
+  const [friends, setFriends] = useState(initialFriends);
   const [showAddFriend, setShowAddFriend] = useState(false);
 
   function handleShowAddFriend() {
     setShowAddFriend((show) => !show);
   }
 
+  function handleAddFriend(friend) {
+    setFriends((friends) => [...friends, friend]);
+    setShowAddFriend(false);
+  }
+
   return (
     <div className="app">
       <div className="sidebar">
-        <FriendsList />;{showAddFriend && <FormAddFriend />}
+        <FriendsList friendsIn={friends} />;
+        {showAddFriend && <FormAddFriend onAddFriend={handleAddFriend} />}
         <Button onClick={handleShowAddFriend}>
           {showAddFriend ? "Close" : "Add Friend"}
         </Button>
@@ -47,12 +54,11 @@ export default function App() {
   );
 }
 
-function FriendsList() {
-  const friends = initialFriends;
+function FriendsList({ friendsIn }) {
   return (
     <div>
       <ul>
-        {friends.map(({ name, image, balance, id }) => (
+        {friendsIn.map(({ name, image, balance, id }) => (
           <Friend name={name} image={image} balance={balance} key={id} />
         ))}
       </ul>
@@ -86,7 +92,7 @@ function Friend({ name, image, balance }) {
   );
 }
 
-function FormAddFriend() {
+function FormAddFriend({ onAddFriend }) {
   const [name, setName] = useState("");
   const [image, setImage] = useState("https://i.pravatar.cc/48");
 
@@ -102,14 +108,14 @@ function FormAddFriend() {
       balance: 0,
       id,
     };
-    console.log(newFriend);
+    onAddFriend(newFriend);
 
     setName("");
     setImage("https://i.pravatar.cc/48");
   }
   return (
     <form className="form-add-friend" onSubmit={handleSubmit}>
-      <label>👩‍🤝‍🧑Friend name</label>
+      <label>👯Friend name</label>
       <input
         type="text"
         value={name}
@@ -138,7 +144,7 @@ function FormSplitBill() {
       <label>🧍Your expense</label>
       <input type="text" />
 
-      <label>👩‍🤝‍🧑X's expense</label>
+      <label> X's expense</label>
       <input type="text" disabled />
 
       <label>🤑 Who is paying the bill</label>
